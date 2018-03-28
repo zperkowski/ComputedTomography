@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Slider;
 
-public class Controller {
+public class ControllerMainWindow {
 
     @FXML
     Slider slider_rays;
