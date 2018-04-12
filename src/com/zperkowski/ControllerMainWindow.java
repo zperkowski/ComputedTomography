@@ -4,6 +4,11 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import java.io.File;
 
 import static java.lang.String.valueOf;
 
@@ -51,6 +56,8 @@ public class ControllerMainWindow {
     @FXML
     public void menu_open() {
 
+        Image image = openPictureDialog();
+
     }
 
     @FXML
@@ -91,6 +98,25 @@ public class ControllerMainWindow {
     @FXML
     public void textfield_rotation_edited() {
         slider_rotation.setValue(Double.parseDouble(valueOf(textfield_rotation.getText())));
+    }
+
+    private Image openPictureDialog() {
+        Image image;
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select a picture");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif")
+        );
+        File file = fileChooser.showOpenDialog(new Stage());
+        if (file != null) {
+            image = new Image(file.toURI().toString());
+            return image;
+        }
+        return null;
     }
 
 }
