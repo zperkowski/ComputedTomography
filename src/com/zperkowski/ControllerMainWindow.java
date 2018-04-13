@@ -41,6 +41,9 @@ public class ControllerMainWindow {
     @FXML
     public void generate() {
         System.out.println("Rays: " + slider_rays.getValue() + " Angle: " + slider_angle.getValue() + " Rotation:" + slider_rotation.getValue());
+        slider_rays_edited();
+        slider_angle_edited();
+        slider_rotation_edited();
     }
 
     @FXML
@@ -87,17 +90,29 @@ public class ControllerMainWindow {
 
     @FXML
     public void textfield_rays_edited() {
-        slider_rays.setValue(Double.parseDouble(valueOf(textfield_rays.getText())));
+        try {
+            slider_rays.setValue(Double.parseDouble(valueOf(textfield_rays.getText())));
+        } catch (NumberFormatException emptyStringError) {
+            slider_rays.setValue(1.0);
+        }
     }
 
     @FXML
     public void textfield_angle_edited() {
-        slider_angle.setValue(Double.parseDouble(valueOf(textfield_angle.getText())));
+        try {
+            slider_angle.setValue(Double.parseDouble(valueOf(textfield_angle.getText())));
+        } catch (NumberFormatException emptyStringError) {
+            slider_angle.setValue(1.0);
+        }
     }
 
     @FXML
     public void textfield_rotation_edited() {
-        slider_rotation.setValue(Double.parseDouble(valueOf(textfield_rotation.getText())));
+        try {
+            slider_rotation.setValue(Double.parseDouble(valueOf(textfield_rotation.getText())));
+        } catch (NumberFormatException emptyStringError) {
+            slider_rotation.setValue(0.0);
+        }
     }
 
     private Image openPictureDialog() {
