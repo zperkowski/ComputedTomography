@@ -90,29 +90,45 @@ public class ControllerMainWindow {
 
     @FXML
     public void textfield_rays_edited() {
-        try {
-            slider_rays.setValue(Double.parseDouble(valueOf(textfield_rays.getText())));
-        } catch (NumberFormatException emptyStringError) {
-            slider_rays.setValue(1.0);
-        }
+        setValue(textfield_rays, slider_rays);
     }
 
     @FXML
     public void textfield_angle_edited() {
-        try {
-            slider_angle.setValue(Double.parseDouble(valueOf(textfield_angle.getText())));
-        } catch (NumberFormatException emptyStringError) {
-            slider_angle.setValue(1.0);
-        }
+        setValue(textfield_angle, slider_angle);
     }
 
     @FXML
     public void textfield_rotation_edited() {
+        setValue(textfield_rotation, slider_rotation);
+    }
+
+    private void setValue(TextField textField, Slider slider) {
         try {
-            slider_rotation.setValue(Double.parseDouble(valueOf(textfield_rotation.getText())));
+            double oldValue = Double.parseDouble(textField.getText());
+            double newValue = getValue(oldValue, textField, slider);
+            slider.setValue(newValue);
+            // Compares two values to avoid loosing cursor position on the TextField.
+            // Method setText() moves the position to the begin.
+            if (oldValue != newValue)
+                textField.setText(String.valueOf(newValue));
         } catch (NumberFormatException emptyStringError) {
-            slider_rotation.setValue(0.0);
+            slider.setValue(slider.getMin());
         }
+    }
+
+    /* Check if the value is between minimum and maximum possible value in a slider.
+        If value is to high returns maximum value of slider.
+        If value is to low returns minimum value of slider. */
+    private double getValue(double value, TextField textField, Slider slider) {
+        if (value < 0) {
+            value = 0.0;
+            textField.setText(String.valueOf(value));
+        } else if (value > slider.getMax()) {
+            value = slider.getMax();
+            textField.setText(String.valueOf(value));
+        }
+        return value;
     }
 
     private Image openPictureDialog() {
