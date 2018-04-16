@@ -2,9 +2,11 @@ package com.zperkowski;
 
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -31,11 +33,9 @@ public class ControllerMainWindow {
     @FXML
     TextField textfield_rotation;
 
-
     @FXML
     public void initialize() {
         menu_new();
-
     }
 
     @FXML
@@ -44,6 +44,15 @@ public class ControllerMainWindow {
         slider_rays_edited();
         slider_angle_edited();
         slider_rotation_edited();
+        GraphicsContext gc = canvas_right.getGraphicsContext2D();
+        draw_oval( gc );
+    }
+
+    private void draw_oval(GraphicsContext gc) {
+        double canvasWidth = gc.getCanvas().getWidth();
+        double canvasHeight = gc.getCanvas().getHeight();
+        gc.setStroke(Color.RED);
+        gc.strokeOval(10, 10, canvasWidth-20, canvasHeight-20);
     }
 
     @FXML
@@ -58,9 +67,11 @@ public class ControllerMainWindow {
 
     @FXML
     public void menu_open() {
-
         Image image = openPictureDialog();
-
+        GraphicsContext gc = canvas_right.getGraphicsContext2D();
+        double canvasWidth = gc.getCanvas().getWidth();
+        double canvasHeight = gc.getCanvas().getHeight();
+        gc.drawImage(image, 0, 0, canvasWidth, canvasHeight);
     }
 
     @FXML
