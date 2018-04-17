@@ -83,16 +83,12 @@
                     <items>
                       <AnchorPane minHeight="160.0" minWidth="50.0" prefHeight="160.0" prefWidth="100.0">
                            <children>
-                              <Group AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <Canvas fx:id="canvas_right" height="300.0" width="300.0" />
-                                 </children>
-                              </Group>
+                                <Canvas fx:id="canvas_center" height="300.0" width="300.0" />
                            </children>
                         </AnchorPane>
                       <AnchorPane minHeight="160.0" minWidth="50.0" prefHeight="160.0" prefWidth="100.0">
                            <children>
-                              <Canvas fx:id="canvas_center" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Canvas fx:id="canvas_right" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                     </items>

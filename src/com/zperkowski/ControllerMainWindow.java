@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-import static java.lang.String.valueOf;
 
 public class ControllerMainWindow {
 
@@ -44,8 +43,8 @@ public class ControllerMainWindow {
         slider_rays_edited();
         slider_angle_edited();
         slider_rotation_edited();
-        GraphicsContext gc = canvas_right.getGraphicsContext2D();
-        draw_oval( gc );
+        GraphicsContext gc = canvas_center.getGraphicsContext2D();
+        draw_oval(gc);
     }
 
     private void draw_oval(GraphicsContext gc) {
@@ -68,7 +67,7 @@ public class ControllerMainWindow {
     @FXML
     public void menu_open() {
         Image image = openPictureDialog();
-        GraphicsContext gc = canvas_right.getGraphicsContext2D();
+        GraphicsContext gc = canvas_center.getGraphicsContext2D();
         double canvasWidth = gc.getCanvas().getWidth();
         double canvasHeight = gc.getCanvas().getHeight();
         gc.drawImage(image, 0, 0, canvasWidth, canvasHeight);
@@ -86,17 +85,17 @@ public class ControllerMainWindow {
 
     @FXML
     public void slider_rays_edited() {
-        textfield_rays.setText(valueOf(slider_rays.getValue()));
+        textfield_rays.setText(String.valueOf(slider_rays.getValue()));
     }
 
     @FXML
     public void slider_angle_edited() {
-        textfield_angle.setText(valueOf(slider_angle.getValue()));
+        textfield_angle.setText(String.valueOf(slider_angle.getValue()));
     }
 
     @FXML
     public void slider_rotation_edited() {
-        textfield_rotation.setText(valueOf(slider_rotation.getValue()));
+        textfield_rotation.setText(String.valueOf(slider_rotation.getValue()));
     }
 
     @FXML
