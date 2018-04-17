@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -21,7 +22,7 @@ public class ControllerMainWindow {
     @FXML
     Slider slider_angle;
     @FXML
-    Slider slider_rotation;
+    Slider slider_step;
     @FXML
     Canvas canvas_center;
     @FXML
@@ -31,9 +32,11 @@ public class ControllerMainWindow {
     @FXML
     TextField textfield_angle;
     @FXML
-    TextField textfield_rotation;
+    TextField textfield_step;
     @FXML
     Button button_generate;
+    @FXML
+    ProgressBar progressBar;
 
     GraphicsContext gc_center;
     GraphicsContext gc_right;
@@ -47,11 +50,16 @@ public class ControllerMainWindow {
 
     @FXML
     public void generate() {
-        System.out.println("Rays: " + slider_rays.getValue() + " Angle: " + slider_angle.getValue() + " Rotation:" + slider_rotation.getValue());
+        System.out.println("Rays: " + slider_rays.getValue() + " Angle: " + slider_angle.getValue() + " Step:" + slider_step.getValue());
         slider_rays_edited();
         slider_angle_edited();
-        slider_rotation_edited();
+        slider_step_edited();
         draw_oval(gc_center);
+        double step = slider_step.getValue();
+        for (int i = 0; i < 360; i+=step) {
+            progressBar.setProgress(i / 360);
+            // TODO: Generating the sinogram
+        }
     }
 
     private void draw_oval(GraphicsContext gc) {
@@ -65,10 +73,11 @@ public class ControllerMainWindow {
     public void menu_new() {
         slider_rays.setValue(1.0);
         slider_angle.setValue(1.0);
-        slider_rotation.setValue(0.0);
+        slider_step.setValue(0.0);
         slider_angle_edited();
         slider_rays_edited();
-        slider_rotation_edited();
+        slider_step_edited();
+        progressBar.setProgress(0.0);
         button_generate.setDisable(true);
         if (gc_center != null)
             gc_center.clearRect(0, 0, gc_center.getCanvas().getWidth(), gc_center.getCanvas().getHeight());
@@ -109,8 +118,8 @@ public class ControllerMainWindow {
     }
 
     @FXML
-    public void slider_rotation_edited() {
-        textfield_rotation.setText(String.valueOf(slider_rotation.getValue()));
+    public void slider_step_edited() {
+        textfield_step.setText(String.valueOf(slider_step.getValue()));
     }
 
     @FXML
@@ -124,8 +133,8 @@ public class ControllerMainWindow {
     }
 
     @FXML
-    public void textfield_rotation_edited() {
-        setValue(textfield_rotation, slider_rotation);
+    public void textfield_step_edited() {
+        setValue(textfield_step, slider_step);
     }
 
     private void setValue(TextField textField, Slider slider) {
