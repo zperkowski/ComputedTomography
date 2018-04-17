@@ -3,6 +3,7 @@ package com.zperkowski;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -31,9 +32,16 @@ public class ControllerMainWindow {
     TextField textfield_angle;
     @FXML
     TextField textfield_rotation;
+    @FXML
+    Button button_generate;
+
+    GraphicsContext gc_center;
+    GraphicsContext gc_right;
 
     @FXML
     public void initialize() {
+        gc_center = canvas_center.getGraphicsContext2D();
+        gc_right = canvas_right.getGraphicsContext2D();
         menu_new();
     }
 
@@ -43,8 +51,7 @@ public class ControllerMainWindow {
         slider_rays_edited();
         slider_angle_edited();
         slider_rotation_edited();
-        GraphicsContext gc = canvas_center.getGraphicsContext2D();
-        draw_oval(gc);
+        draw_oval(gc_center);
     }
 
     private void draw_oval(GraphicsContext gc) {
@@ -62,15 +69,23 @@ public class ControllerMainWindow {
         slider_angle_edited();
         slider_rays_edited();
         slider_rotation_edited();
+        button_generate.setDisable(true);
+        if (gc_center != null)
+            gc_center.clearRect(0, 0, gc_center.getCanvas().getWidth(), gc_center.getCanvas().getHeight());
+        if (gc_right != null)
+            gc_right.clearRect(0, 0, gc_right.getCanvas().getWidth(), gc_right.getCanvas().getHeight());
     }
 
     @FXML
     public void menu_open() {
         Image image = openPictureDialog();
-        GraphicsContext gc = canvas_center.getGraphicsContext2D();
-        double canvasWidth = gc.getCanvas().getWidth();
-        double canvasHeight = gc.getCanvas().getHeight();
-        gc.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+        if (image != null) {
+            GraphicsContext gc = canvas_center.getGraphicsContext2D();
+            double canvasWidth = gc.getCanvas().getWidth();
+            double canvasHeight = gc.getCanvas().getHeight();
+            gc.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+            button_generate.setDisable(false);
+        }
     }
 
     @FXML
