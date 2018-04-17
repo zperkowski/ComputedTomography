@@ -56,7 +56,7 @@ public class ControllerMainWindow {
         slider_step_edited();
         draw_oval(gc_center);
         double step = slider_step.getValue();
-        for (int i = 0; i < 360; i+=step) {
+        for (double i = 0; i < 360; i+=step) {
             progressBar.setProgress(i / 360);
             // TODO: Generating the sinogram
         }
@@ -73,7 +73,7 @@ public class ControllerMainWindow {
     public void menu_new() {
         slider_rays.setValue(1.0);
         slider_angle.setValue(1.0);
-        slider_step.setValue(0.0);
+        slider_step.setValue(1.0);
         slider_angle_edited();
         slider_rays_edited();
         slider_step_edited();

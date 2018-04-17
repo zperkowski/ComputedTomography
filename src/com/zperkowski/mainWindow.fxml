@@ -71,7 +71,7 @@
                         <Button fx:id="button_generate" mnemonicParsing="false" onAction="#generate" text="Generate" GridPane.rowIndex="11" />
                         <Slider fx:id="slider_rays" blockIncrement="1.0" majorTickUnit="1.0" min="1.0" minorTickCount="0" onMouseReleased="#slider_rays_edited" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.rowIndex="2" />
                         <Slider fx:id="slider_angle" blockIncrement="1.0" majorTickUnit="1.0" max="160.0" min="1.0" minorTickCount="0" onMouseReleased="#slider_angle_edited" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.rowIndex="5" />
-                        <Slider fx:id="slider_step" blockIncrement="1.0" majorTickUnit="1.0" max="359.0" minorTickCount="0" onMouseReleased="#slider_step_edited" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.rowIndex="8" />
+                        <Slider fx:id="slider_step" blockIncrement="1.0" majorTickUnit="1.0" min="1.0" max="359.0" minorTickCount="0" onMouseReleased="#slider_step_edited" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.rowIndex="8" />
                         <TextField fx:id="textfield_rays" maxWidth="50.0" onKeyReleased="#textfield_rays_edited" GridPane.rowIndex="1" />
                         <TextField fx:id="textfield_angle" maxWidth="50.0" onKeyReleased="#textfield_angle_edited" GridPane.rowIndex="4" />
                         <TextField fx:id="textfield_step" maxWidth="50.0" onKeyReleased="#textfield_step_edited" prefHeight="25.0" prefWidth="118.0" GridPane.rowIndex="7" />
