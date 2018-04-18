@@ -38,8 +38,9 @@ public class ControllerMainWindow {
     @FXML
     ProgressBar progressBar;
 
-    GraphicsContext gc_center;
-    GraphicsContext gc_right;
+    private Image image;
+    private GraphicsContext gc_center;
+    private GraphicsContext gc_right;
 
     @FXML
     public void initialize() {
@@ -55,11 +56,9 @@ public class ControllerMainWindow {
         slider_angle_edited();
         slider_step_edited();
         draw_oval(gc_center);
-        double step = slider_step.getValue();
-        for (double i = 0; i < 360; i+=step) {
-            progressBar.setProgress(i / 360);
-            // TODO: Generating the sinogram
-        }
+        Tomograph tomograph = new Tomograph(image, slider_rays.getValue(), slider_angle.getValue(), slider_step.getValue());
+        progressBar.progressProperty().bind(tomograph.getSinogramGenerator().progressProperty());
+        tomograph.getSinogramGenerator().start();
     }
 
     private void draw_oval(GraphicsContext gc) {
@@ -87,7 +86,7 @@ public class ControllerMainWindow {
 
     @FXML
     public void menu_open() {
-        Image image = openPictureDialog();
+        image = openPictureDialog();
         if (image != null) {
             GraphicsContext gc = canvas_center.getGraphicsContext2D();
             double canvasWidth = gc.getCanvas().getWidth();
