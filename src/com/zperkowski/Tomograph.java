@@ -32,6 +32,10 @@ public class Tomograph {
         System.out.println(sinogram);
     }
 
+    public Image getGrayPicture() {
+        return SwingFXUtils.toFXImage(grayImage, null);
+    }
+
     public TaskGenerateSinogram getSinogramGenerator() {
         if (sinogramGenerator == null)
             sinogramGenerator = new TaskGenerateSinogram();

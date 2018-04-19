@@ -1,5 +1,7 @@
 package com.zperkowski;
 
+import com.sun.istack.internal.Nullable;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,7 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 
 
 public class ControllerMainWindow {
@@ -55,21 +59,43 @@ public class ControllerMainWindow {
         slider_rays_edited();
         slider_angle_edited();
         slider_step_edited();
-        draw_oval(gc_center);
         Tomograph tomograph = new Tomograph(image, slider_rays.getValue(), slider_angle.getValue(), slider_step.getValue());
+        gc_center.drawImage(tomograph.getGrayPicture(), 0, 0);
         progressBar.progressProperty().bind(tomograph.getSinogramGenerator().progressProperty());
         tomograph.getSinogramGenerator().start();
+        draw_oval(gc_center);
     }
 
     private void draw_oval(GraphicsContext gc) {
         double canvasWidth = gc.getCanvas().getWidth();
         double canvasHeight = gc.getCanvas().getHeight();
+        int centerX = (int) canvasWidth / 2;
+        int centerY = (int) canvasHeight / 2;
+
+        if (canvasHeight > canvasWidth)
+            canvasHeight = canvasWidth;
+        else
+            canvasWidth = canvasHeight;
+
         gc.setStroke(Color.RED);
-        gc.strokeOval(10, 10, canvasWidth-20, canvasHeight-20);
+        gc.strokeOval((centerX - canvasWidth/2), (centerY - canvasHeight/2), canvasWidth, canvasHeight);
+    }
+
+    private void changeCanvasSize(@Nullable Image image, Canvas canvas) {
+        if (image == null) {
+            canvas.setHeight(0);
+            canvas.setWidth(0);
+        } else {
+            canvas.setWidth(image.getWidth());
+            canvas.setHeight(image.getHeight());
+        }
     }
 
     @FXML
     public void menu_new() {
+        image = null;
+        changeCanvasSize(null, canvas_center);
+        changeCanvasSize(null, canvas_right);
         slider_rays.setValue(1.0);
         slider_angle.setValue(1.0);
         slider_step.setValue(1.0);
@@ -88,6 +114,7 @@ public class ControllerMainWindow {
     public void menu_open() {
         image = openPictureDialog();
         if (image != null) {
+            changeCanvasSize(image, canvas_center);
             GraphicsContext gc = canvas_center.getGraphicsContext2D();
             double canvasWidth = gc.getCanvas().getWidth();
             double canvasHeight = gc.getCanvas().getHeight();
