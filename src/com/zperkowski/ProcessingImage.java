@@ -5,6 +5,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -107,5 +108,25 @@ public class ProcessingImage {
             bufferedImageGray = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null).filter(bufferedImageGray, null);
         }
         return bufferedImageGray;
+    }
+
+    public void drawOval() {
+        graphicsContext.setStroke(Color.RED);
+        graphicsContext.strokeOval((getCenterX() - getNormWidth()/2),
+                (getCenterY() - getNormHeight()/2),
+                getNormWidth(),
+                getNormHeight());
+    }
+
+    public void drawRays(int quantity, double degree) {
+        //TODO: Should draw as many as given parameter
+        graphicsContext.setStroke(Color.RED);
+        int xStart, yStart, xEnd, yEnd;
+        double rad = degree * Math.PI / 180;
+        xStart = getCenterX();
+        yStart = getCenterY();
+        xEnd = (int) (xStart + Math.sin(rad) * (getNormWidth() / 2));
+        yEnd = (int) (yStart + Math.cos(rad) * (getNormWidth() / 2));
+        graphicsContext.strokeLine(xStart, yStart, xEnd, yEnd);
     }
 }

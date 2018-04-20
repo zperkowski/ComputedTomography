@@ -57,15 +57,7 @@ public class ControllerMainWindow {
         pImage.getGraphicsContext().drawImage(pImage.getImageGray(), 0, 0);
         progressBar.progressProperty().bind(tomograph.getSinogramGenerator().progressProperty());
         tomograph.getSinogramGenerator().start();
-        draw_oval();
-    }
-
-    private void draw_oval() {
-        pImage.getGraphicsContext().setStroke(Color.RED);
-        pImage.getGraphicsContext().strokeOval((pImage.getCenterX() - pImage.getNormWidth()/2),
-                (pImage.getCenterY() - pImage.getNormHeight()/2),
-                pImage.getNormWidth(),
-                pImage.getNormHeight());
+        pImage.drawOval();
     }
 
     @FXML
