@@ -118,15 +118,25 @@ public class ProcessingImage {
                 getNormHeight());
     }
 
-    public void drawRays(int quantity, double degree) {
-        //TODO: Should draw as many as given parameter
+    public void drawRays(int quantity, double step, double angle) {
+        //TODO: Find why rays aren't straight for parameters like quantity: 3, step: 90, angle:10.
         graphicsContext.setStroke(Color.RED);
+        if (quantity == 1)
+            angle = 0;
         int xStart, yStart, xEnd, yEnd;
-        double rad = degree * Math.PI / 180;
+        double radAlpha = step * Math.PI / 180;
+        double radBeta = angle * Math.PI / 180;
         xStart = getCenterX();
         yStart = getCenterY();
-        xEnd = (int) (xStart + Math.sin(rad) * (getNormWidth() / 2));
-        yEnd = (int) (yStart + Math.cos(rad) * (getNormWidth() / 2));
-        graphicsContext.strokeLine(xStart, yStart, xEnd, yEnd);
+        xStart = (int) (xStart + Math.sin(radAlpha) * (getNormWidth() / 2));
+        yStart = (int) (yStart + Math.cos(radAlpha) * (getNormWidth() / 2));
+
+        for (double i = 0; i < quantity; i++) {
+            double radGamma = radAlpha + Math.PI - (radBeta / 2) + (i / quantity-1 * radBeta);
+            xEnd = (int) (xStart + Math.sin(radGamma) * (getNormWidth()));
+            yEnd = (int) (yStart + Math.cos(radGamma) * (getNormWidth()));
+            graphicsContext.strokeLine(xStart, yStart, xEnd, yEnd);
+        }
+
     }
 }
