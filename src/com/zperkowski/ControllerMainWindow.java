@@ -53,7 +53,6 @@ public class ControllerMainWindow {
         slider_rays_edited();
         slider_angle_edited();
         slider_step_edited();
-        // TODO: Tomograph should get object of ProcessingImage as a parameter
         Tomograph tomograph = new Tomograph(pImage, slider_rays.getValue(), slider_angle.getValue(), slider_step.getValue());
         pImage.getGraphicsContext().drawImage(pImage.getImageGray(), 0, 0);
         progressBar.progressProperty().bind(tomograph.getSinogramGenerator().progressProperty());
