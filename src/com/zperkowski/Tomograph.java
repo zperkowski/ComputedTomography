@@ -39,9 +39,9 @@ public class Tomograph {
                     for (int i = 0; i < 360; i += step) {
                         //TODO: Generate a sinogram
                         Thread.sleep(75);
-                        pImage.drawRays(rays, i, angle);
+                        pImage.drawRays(rays, (double) i, angle);
                         updateProgress((i / 359), 1.0);
-                        System.out.println(i + "\t" + (i / 359));
+                        System.out.println(i + "\t" + ((double) i / 359));
                     }
                     updateProgress(1.0, 1.0);
                     return 1.0;
