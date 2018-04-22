@@ -36,7 +36,7 @@ public class Tomograph {
         protected Task<Void> createTask() {
             Task task = new Task<Double>() {
                 protected Double call() throws Exception {
-                    for (double i = 0; i < 360; i += step) {
+                    for (int i = 0; i < 360; i += step) {
                         //TODO: Generate a sinogram
                         Thread.sleep(75);
                         pImage.drawRays(rays, i, angle);

@@ -123,18 +123,19 @@ public class ProcessingImage {
         graphicsContext.setStroke(Color.RED);
         if (rays == 1)
             angle = 0;
+        else
+            angle *= 2;
         double xStart, yStart, xEnd, yEnd;
         double radAlpha = step * Math.PI / 180;
         double radBeta = angle * Math.PI / 180;
-        xStart = getCenterX();
-        yStart = getCenterY();
-        xStart = (xStart + Math.sin(radAlpha) * (getNormWidth() / 2));
-        yStart = (yStart + Math.cos(radAlpha) * (getNormHeight() / 2));
 
-        for (double i = 0; i < rays; i++) {
-            double radGamma = radAlpha + Math.PI - (radBeta / 2) + ((i / rays-1) * radBeta);
-            xEnd = (xStart + Math.sin(radGamma) * (getNormWidth()));
-            yEnd = (yStart + Math.cos(radGamma) * (getNormHeight()));
+        xStart = (getCenterX() + Math.sin(radAlpha) * (getNormWidth() / 2));
+        yStart = (getCenterY() + Math.cos(radAlpha) * (getNormHeight() / 2));
+
+        for (int i = 0; i < rays; i++) {
+            double radGamma = radAlpha + Math.PI - (radBeta / 2) + ((i / (rays-1)) * radBeta);
+            xEnd = (getCenterX() + Math.sin(radGamma) * (getNormWidth() / 2));
+            yEnd = (getCenterY() + Math.cos(radGamma) * (getNormHeight() / 2));
             graphicsContext.strokeLine(xStart, yStart, xEnd, yEnd);
         }
 
