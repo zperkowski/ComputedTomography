@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
+import java.util.*;
 
 public class ProcessingImage {
     private Image image;
@@ -118,28 +119,51 @@ public class ProcessingImage {
                 getNormHeight());
     }
 
-    public void drawRays(double rays, double step, double angle) {
-        graphicsContext.setStroke(Color.RED);
+    public List<Map> getPoints (double rays, double step, double angle) {
+        List<Map> listMaps = new ArrayList<>();
+
         if (rays == 1)
             angle = 0;
         else
             angle *= 2; // Inscribed angle
+
         double xStart, yStart, xEnd, yEnd;
         double radAlpha = step * Math.PI / 180;
         double radBeta = angle * Math.PI / 180;
-
         xStart = (getCenterX() + Math.sin(radAlpha) * (getNormWidth() / 2));
         yStart = (getCenterY() + Math.cos(radAlpha) * (getNormHeight() / 2));
-
 
         for (int i = 0; i < rays; i++) {
             if (rays == 1)
                 rays = 0;   // To avoid calculating Not a Number
-            double radGamma = radAlpha + Math.PI - (radBeta / 2) + (i / (rays-1) * radBeta);
+            double radGamma = radAlpha + Math.PI - (radBeta / 2) + (i / (rays - 1) * radBeta);
             xEnd = (getCenterX() + Math.sin(radGamma) * (getNormWidth() / 2));
             yEnd = (getCenterY() + Math.cos(radGamma) * (getNormHeight() / 2));
-            graphicsContext.strokeLine(xStart, yStart, xEnd, yEnd);
-        }
 
+            Map<String, Double> mapPoints = new HashMap<String, Double>();
+            mapPoints.put("yEnd", yEnd);
+            mapPoints.put("xEnd", xEnd);
+            mapPoints.put("yStart", yStart);
+            mapPoints.put("xStart", xStart);
+
+            listMaps.add(mapPoints);
+        }
+        return listMaps;
+    }
+
+    public void drawRays(double rays, double step, double angle) {
+        graphicsContext.setStroke(Color.RED);
+        double xStart, yStart, xEnd, yEnd;
+
+        List<Map> lines = getPoints(rays, step, angle);
+
+        for (Map <String,Double> line : lines) {
+            xStart = line.get("xStart");
+            yStart = line.get("yStart");
+            xEnd = line.get("xEnd");
+            yEnd = line.get("yEnd");
+            graphicsContext.strokeLine(xStart,yStart,xEnd,yEnd);
+        }
     }
 }
+
