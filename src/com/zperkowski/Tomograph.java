@@ -40,6 +40,7 @@ public class Tomograph {
                         //TODO: Generate a sinogram
                         Thread.sleep(75);
                         pImage.drawRays(rays, (double) i, angle);
+                        pImage.bresenham(rays, (double) i, angle);
                         updateProgress((i / 359), 1.0);
                         System.out.println(i + "\t" + ((double) i / 359));
                     }

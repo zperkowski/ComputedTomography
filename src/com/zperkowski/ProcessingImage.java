@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.util.*;
 
+import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.D;
+
 public class ProcessingImage {
     private Image image;
     private Image imageGray;
@@ -155,15 +157,127 @@ public class ProcessingImage {
         graphicsContext.setStroke(Color.RED);
         double xStart, yStart, xEnd, yEnd;
 
-        List<Map> lines = getPoints(rays, step, angle);
+        List<Map> listMaps = getPoints(rays, step, angle);
 
-        for (Map <String,Double> line : lines) {
+        for (Map <String,Double> line : listMaps) {
             xStart = line.get("xStart");
             yStart = line.get("yStart");
             xEnd = line.get("xEnd");
             yEnd = line.get("yEnd");
             graphicsContext.strokeLine(xStart,yStart,xEnd,yEnd);
         }
+    }
+
+    public List<Map> pointsToInt (double rays, double step, double angle) {
+        List<Map> listInts = new ArrayList<>();
+        double xStart, yStart, xEnd, yEnd;
+        double x = getCenterX();
+        double y = getCenterY();
+        int xStart_int = 0, yStart_int = 0, xEnd_int = 0, yEnd_int = 0;
+
+        List<Map> listMaps = getPoints(rays, step, angle);
+
+        for (Map<String, Double> line : listMaps) {
+            xStart = line.get("xStart");
+            yStart = line.get("yStart");
+            xEnd = line.get("xEnd");
+            yEnd = line.get("yEnd");
+
+            if (xStart > x) {
+                if (yStart > y) {
+                    xStart_int = (int) Math.floor(xStart);
+                    yStart_int = (int) Math.floor(yStart);
+                } else if (yStart < y) {
+                    xStart_int = (int) Math.floor(xStart);
+                    yStart_int = (int) Math.ceil(yStart);
+                }
+            } else if (xStart < x) {
+                if (yStart > y) {
+                    xStart_int = (int) Math.ceil(xStart);
+                    yStart_int = (int) Math.floor(yStart);
+                } else if (yStart < y) {
+                    xStart_int = (int) Math.ceil(xStart);
+                    yStart_int = (int) Math.ceil(yStart);
+                }
+            }
+
+            if (xEnd > x) {
+                if (yStart > y) {
+                    xEnd_int = (int) Math.floor(xEnd);
+                    yEnd_int = (int) Math.floor(yEnd);
+                } else if (yStart < y) {
+                    xEnd_int = (int) Math.floor(xEnd);
+                    yEnd_int = (int) Math.ceil(yEnd);
+                }
+            } else if (xEnd < x) {
+                if (yEnd > y) {
+                    xEnd_int = (int) Math.ceil(xEnd);
+                    yEnd_int = (int) Math.floor(yEnd);
+                } else if (yEnd_int < y) {
+                    xEnd_int = (int) Math.ceil(xEnd);
+                    yEnd_int = (int) Math.ceil(yEnd);
+                }
+            }
+
+            Map<String, Integer> mapInts = new HashMap<String, Integer>();
+            mapInts.put("yEnd", yEnd_int);
+            mapInts.put("xEnd", xEnd_int);
+            mapInts.put("yStart", yStart_int);
+            mapInts.put("xStart", xStart_int);
+
+            listInts.add(mapInts);
+            }
+        return listInts;
+    }
+
+    public List<List> bresenham(double rays, double step, double angle) {
+        int xStart, yStart, xEnd, yEnd;
+        List<Map> listMaps = pointsToInt(rays, step, angle);
+        List<Map> listPoints = new ArrayList<>();
+        List<List> listLines = new ArrayList<>();
+
+        for (Map<String, Integer> line : listMaps) {
+            xStart = line.get("xStart");
+            yStart = line.get("yStart");
+            xEnd = line.get("xEnd");
+            yEnd = line.get("yEnd");
+
+            int w = xStart-xEnd;
+            int h = yStart-yEnd;
+
+            int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0 ;
+            if (w<0) dx1 = -1 ; else if (w>0) dx1 = 1 ;
+            if (h<0) dy1 = -1 ; else if (h>0) dy1 = 1 ;
+            if (w<0) dx2 = -1 ; else if (w>0) dx2 = 1 ;
+            int longest = Math.abs(w) ;
+            int shortest = Math.abs(h) ;
+            if (!(longest>shortest)) {
+                longest = Math.abs(h) ;
+                shortest = Math.abs(w) ;
+                if (h<0) dy2 = -1 ; else if (h>0) dy2 = 1 ;
+                dx2 = 0 ;
+            }
+            int numerator = longest >> 1 ;
+            for (int i=0;i<=longest;i++) {
+                Map<String, Integer> mapPoints = new HashMap<String, Integer>();
+                mapPoints.put("yEnd", yEnd);
+                mapPoints.put("xEnd", xEnd);
+                listPoints.add(mapPoints);
+                numerator += shortest ;
+                if (!(numerator<longest)) {
+                    numerator -= longest ;
+                    xEnd += dx1 ;
+                    yEnd += dy1 ;
+                }
+                else {
+                    xEnd += dx2 ;
+                    yEnd += dy2 ;
+                }
+            }
+            listLines.add(listPoints);
+            listPoints.clear();
+        }
+        return listLines;
     }
 }
 
