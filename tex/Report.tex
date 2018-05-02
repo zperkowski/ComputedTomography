@@ -1,0 +1,85 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage{polski}
+\usepackage{pgfplots}
+\usepackage{color}
+\usepackage{listings}
+\lstset{language=C}
+\usepackage{hyperref}
+\usepackage{csvsimple}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\usepackage{fullpage,amsmath}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\usetikzlibrary{arrows,shapes}
+\pgfplotsset{width=10cm}
+\usepackage[left=1cm,right=1cm,top=2cm,bottom=2cm]{geometry}
+\renewcommand{\thesection}{\Roman{section}} % zmiana numeracji sekcji na rzymskie
+\lstset{language=Java,
+    extendedchars=\true
+}
+% Wykresy
+\usepackage{pgfplots}
+\usepackage{SIunits}
+\pgfplotsset{compat=newest}
+
+% Tabele
+ \usepackage{pgfplotstable}
+ \usepackage{booktabs}
+
+ \usepackage{longtable}
+ \pgfplotstableset{
+ begin table=\begin{longtable},
+ end table=\end{longtable},
+ }
+
+\author{Zdzisław Perkowski \& Paweł Szajda}
+\title{Computed Tomography}
+
+\begin{document}
+
+\begin{center}
+{\Huge Informatyka w medycynie\\ Computed Tomography\\}
+\begin{large}
+Zdzisław Perkowski\\
+Paweł Szajda
+\end{large}
+\end{center}
+\section{Wstęp}
+
+\section{Wydajność}
+
+\begin{tikzpicture}
+\begin{axis}[
+	xlabel={Wielkość obrazu [pixele]},
+	ylabel={Czas [ms]},
+	title={Czas obliczeń},
+	grid=both,
+	legend style={at={(0.05,0.9)},anchor=south west},
+	minor grid style={gray!25},
+	major grid style={gray!25},
+	width=1\linewidth,
+	no marks]
+%\addplot[line width=1pt,solid,color=blue]
+%	table[x=Matrix,y=Time,col sep=space]{Dane/Cuda_Global_256_16.txt};
+\addlegendentry{Czas [ms]};
+\end{axis}
+\end{tikzpicture}
+
+\section{Dokładność}
+
+\section{Wnioski}
+
+
+\section{Kody źródłowe}
+Pełna wersja oprogramowania znajduje się pod adresem: \\ \href{http://GitHub.com/zperkowski/ComputedTomography}{http://GitHub.com/zperkowski/ComputedTomography}.
+\subsection{Interesujący fragment}
+\begin{lstlisting}
+int main(int argc, char const *argv[]) {
+    return 0;
+}
+\end{lstlisting}
+\end{document}
