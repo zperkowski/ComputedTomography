@@ -12,8 +12,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.util.*;
 
-import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.D;
-
 public class ProcessingImage {
     private Image image;
     private Image imageGray;
@@ -171,9 +169,7 @@ public class ProcessingImage {
     public List<Map> pointsToInt (double rays, double step, double angle) {
         List<Map> listInts = new ArrayList<>();
         double xStart, yStart, xEnd, yEnd;
-        double x = getCenterX();
-        double y = getCenterY();
-        int xStart_int = 0, yStart_int = 0, xEnd_int = 0, yEnd_int = 0;
+        Integer xStartInt, yStartInt, xEndInt, yEndInt;
 
         List<Map> listMaps = getPoints(rays, step, angle);
 
@@ -183,51 +179,50 @@ public class ProcessingImage {
             xEnd = line.get("xEnd");
             yEnd = line.get("yEnd");
 
-            if (xStart > x) {
-                if (yStart > y) {
-                    xStart_int = (int) Math.floor(xStart);
-                    yStart_int = (int) Math.floor(yStart);
-                } else if (yStart < y) {
-                    xStart_int = (int) Math.floor(xStart);
-                    yStart_int = (int) Math.ceil(yStart);
-                }
-            } else if (xStart < x) {
-                if (yStart > y) {
-                    xStart_int = (int) Math.ceil(xStart);
-                    yStart_int = (int) Math.floor(yStart);
-                } else if (yStart < y) {
-                    xStart_int = (int) Math.ceil(xStart);
-                    yStart_int = (int) Math.ceil(yStart);
-                }
-            }
-
-            if (xEnd > x) {
-                if (yStart > y) {
-                    xEnd_int = (int) Math.floor(xEnd);
-                    yEnd_int = (int) Math.floor(yEnd);
-                } else if (yStart < y) {
-                    xEnd_int = (int) Math.floor(xEnd);
-                    yEnd_int = (int) Math.ceil(yEnd);
-                }
-            } else if (xEnd < x) {
-                if (yEnd > y) {
-                    xEnd_int = (int) Math.ceil(xEnd);
-                    yEnd_int = (int) Math.floor(yEnd);
-                } else if (yEnd_int < y) {
-                    xEnd_int = (int) Math.ceil(xEnd);
-                    yEnd_int = (int) Math.ceil(yEnd);
-                }
-            }
+            Map<String, Integer> normalizedPoints = normalizePoints(xStart, yStart);
+            xStartInt = normalizedPoints.get("x");
+            yStartInt = normalizedPoints.get("y");
+            normalizedPoints = normalizePoints(xEnd, yEnd);
+            xEndInt = normalizedPoints.get("x");
+            yEndInt = normalizedPoints.get("y");
 
             Map<String, Integer> mapInts = new HashMap<String, Integer>();
-            mapInts.put("yEnd", yEnd_int);
-            mapInts.put("xEnd", xEnd_int);
-            mapInts.put("yStart", yStart_int);
-            mapInts.put("xStart", xStart_int);
+            mapInts.put("xStart", xStartInt);
+            mapInts.put("yStart", yStartInt);
+            mapInts.put("xEnd", xEndInt);
+            mapInts.put("yEnd", yEndInt);
 
             listInts.add(mapInts);
             }
         return listInts;
+    }
+
+    private Map<String, Integer> normalizePoints(Double x, Double y) {
+        // Assume that the points are in the middle of the image so they are ints
+        Integer normalizedX = x.intValue();
+        Integer normalizedY = y.intValue();
+
+        if (x > getCenterX()) {
+            if (y > getCenterY()) {
+                normalizedX = (int) Math.floor(x);
+                normalizedY = (int) Math.floor(y);
+            } else if (y < getCenterY()) {
+                normalizedX = (int) Math.floor(x);
+                normalizedY = (int) Math.ceil(y);
+            }
+        } else if (x < getCenterX()) {
+            if (y > getCenterY()) {
+                normalizedX = (int) Math.ceil(x);
+                normalizedY = (int) Math.floor(y);
+            } else if (y < getCenterY()) {
+                normalizedX = (int) Math.ceil(x);
+                normalizedY = (int) Math.ceil(y);
+            }
+        }
+        Map<String, Integer> normalizedPoints = new HashMap<String, Integer>();
+        normalizedPoints.put("x", normalizedX);
+        normalizedPoints.put("y", normalizedY);
+        return normalizedPoints;
     }
 
     public List<List> bresenham(double rays, double step, double angle) {
