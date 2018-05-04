@@ -113,13 +113,13 @@ public class ProcessingImage {
 
     public void drawOval() {
         graphicsContext.setStroke(Color.RED);
-        graphicsContext.strokeOval((getCenterX() - getNormWidth()/2),
-                (getCenterY() - getNormHeight()/2),
+        graphicsContext.strokeOval((getCenterX() - getNormWidth() / 2),
+                (getCenterY() - getNormHeight() / 2),
                 getNormWidth(),
                 getNormHeight());
     }
 
-    public List<Map> getPoints (double rays, double step, double angle) {
+    public List<Map> getPoints(double rays, double step, double angle) {
         List<Map> listMaps = new ArrayList<>();
 
         if (rays == 1)
@@ -157,16 +157,16 @@ public class ProcessingImage {
 
         List<Map> listMaps = getPoints(rays, step, angle);
 
-        for (Map <String,Double> line : listMaps) {
+        for (Map<String, Double> line : listMaps) {
             xStart = line.get("xStart");
             yStart = line.get("yStart");
             xEnd = line.get("xEnd");
             yEnd = line.get("yEnd");
-            graphicsContext.strokeLine(xStart,yStart,xEnd,yEnd);
+            graphicsContext.strokeLine(xStart, yStart, xEnd, yEnd);
         }
     }
 
-    public List<Map> pointsToInt (double rays, double step, double angle) {
+    public List<Map> pointsToInt(double rays, double step, double angle) {
         List<Map> listInts = new ArrayList<>();
         double xStart, yStart, xEnd, yEnd;
         Integer xStartInt, yStartInt, xEndInt, yEndInt;
@@ -193,7 +193,7 @@ public class ProcessingImage {
             mapInts.put("yEnd", yEndInt);
 
             listInts.add(mapInts);
-            }
+        }
         return listInts;
     }
 
@@ -227,52 +227,63 @@ public class ProcessingImage {
 
     public List<List> bresenham(double rays, double step, double angle) {
         int xStart, yStart, xEnd, yEnd;
-        List<Map> listMaps = pointsToInt(rays, step, angle);
-        List<Map> listPoints = new ArrayList<>();
-        List<List> listLines = new ArrayList<>();
+        List<Map> listPointsToCalculate = pointsToInt(rays, step, angle);
+        List<Map> listPointsOfLine;
+        List<List> listAllLines = new ArrayList<>();
+        Map<String, Integer> mapXY;
 
-        for (Map<String, Integer> line : listMaps) {
-            xStart = line.get("xStart");
-            yStart = line.get("yStart");
-            xEnd = line.get("xEnd");
-            yEnd = line.get("yEnd");
+        for (Map<String, Integer> pointsToCalculate : listPointsToCalculate) {
+            listPointsOfLine = new ArrayList<>();
+            xStart = pointsToCalculate.get("xStart");
+            yStart = pointsToCalculate.get("yStart");
+            xEnd = pointsToCalculate.get("xEnd");
+            yEnd = pointsToCalculate.get("yEnd");
 
-            int w = xStart-xEnd;
-            int h = yStart-yEnd;
+            int xShift = xStart - xEnd;
+            int yShift = yStart - yEnd;
 
-            int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0 ;
-            if (w<0) dx1 = -1 ; else if (w>0) dx1 = 1 ;
-            if (h<0) dy1 = -1 ; else if (h>0) dy1 = 1 ;
-            if (w<0) dx2 = -1 ; else if (w>0) dx2 = 1 ;
-            int longest = Math.abs(w) ;
-            int shortest = Math.abs(h) ;
-            if (!(longest>shortest)) {
-                longest = Math.abs(h) ;
-                shortest = Math.abs(w) ;
-                if (h<0) dy2 = -1 ; else if (h>0) dy2 = 1 ;
-                dx2 = 0 ;
+            int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+            if (xShift < 0) dx1 = -1;
+            else if (xShift > 0) dx1 = 1;
+            if (yShift < 0) dy1 = -1;
+            else if (yShift > 0) dy1 = 1;
+            if (xShift < 0) dx2 = -1;
+            else if (xShift > 0) dx2 = 1;
+            int longest = Math.abs(xShift);
+            int shortest = Math.abs(yShift);
+            if (!(longest > shortest)) {
+                longest = Math.abs(yShift);
+                shortest = Math.abs(xShift);
+                if (yShift < 0) dy2 = -1;
+                else if (yShift > 0) dy2 = 1;
+                dx2 = 0;
             }
-            int numerator = longest >> 1 ;
-            for (int i=0;i<=longest;i++) {
-                Map<String, Integer> mapPoints = new HashMap<String, Integer>();
-                mapPoints.put("yEnd", yEnd);
-                mapPoints.put("xEnd", xEnd);
-                listPoints.add(mapPoints);
-                numerator += shortest ;
-                if (!(numerator<longest)) {
-                    numerator -= longest ;
-                    xEnd += dx1 ;
-                    yEnd += dy1 ;
-                }
-                else {
-                    xEnd += dx2 ;
-                    yEnd += dy2 ;
+            int numerator = longest >> 1;
+            for (int i = 0; i <= longest; i++) {
+                mapXY = new HashMap<>();
+                mapXY.put("x", xEnd);
+                mapXY.put("y", yEnd);
+                // Adding at the begin because points are calculated from the end
+                listPointsOfLine.add(0, mapXY);
+                numerator += shortest;
+                if (!(numerator < longest)) {
+                    numerator -= longest;
+                    xEnd += dx1;
+                    yEnd += dy1;
+                } else {
+                    xEnd += dx2;
+                    yEnd += dy2;
                 }
             }
-            listLines.add(listPoints);
-            listPoints.clear();
+            listAllLines.add(listPointsOfLine);
+            for (Map point :
+                    listPointsOfLine) {
+                System.out.print(point.get("x") + " " + point.get("y") + "\t");
+            }
+            System.out.println();
         }
-        return listLines;
+        System.out.println();
+        return listAllLines;
     }
 }
 
