@@ -96,9 +96,7 @@ public class ProcessingImage {
 
     public Image getImageGray() {
         if (imageGray == null) {
-            bufferedImageGray = SwingFXUtils.fromFXImage(image, null);
-            bufferedImageGray = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null).filter(bufferedImageGray, null);
-            imageGray = SwingFXUtils.toFXImage(bufferedImageGray, null);
+            imageGray = SwingFXUtils.toFXImage(getBufferedImageGray(), null);
         }
         return imageGray;
     }
@@ -130,15 +128,15 @@ public class ProcessingImage {
         double xStart, yStart, xEnd, yEnd;
         double radAlpha = step * Math.PI / 180;
         double radBeta = angle * Math.PI / 180;
-        xStart = (getCenterX() + Math.sin(radAlpha) * (getNormWidth() / 2));
-        yStart = (getCenterY() + Math.cos(radAlpha) * (getNormHeight() / 2));
+        xStart = (getCenterX() + Math.sin(radAlpha) * ((getNormWidth() / 2) - 1));
+        yStart = (getCenterY() + Math.cos(radAlpha) * ((getNormHeight() / 2) - 1));
 
         for (int i = 0; i < rays; i++) {
             if (rays == 1)
                 rays = 0;   // To avoid calculating Not a Number
             double radGamma = radAlpha + Math.PI - (radBeta / 2) + (i / (rays - 1) * radBeta);
-            xEnd = (getCenterX() + Math.sin(radGamma) * (getNormWidth() / 2));
-            yEnd = (getCenterY() + Math.cos(radGamma) * (getNormHeight() / 2));
+            xEnd = (getCenterX() + Math.sin(radGamma) * ((getNormWidth() / 2) - 1));
+            yEnd = (getCenterY() + Math.cos(radGamma) * ((getNormHeight() / 2) - 1));
 
             Map<String, Double> mapPoints = new HashMap<String, Double>();
             mapPoints.put("yEnd", yEnd);
