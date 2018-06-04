@@ -8,7 +8,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -53,7 +52,10 @@ public class ControllerMainWindow {
         slider_rays_edited();
         slider_angle_edited();
         slider_step_edited();
-        Tomograph tomograph = new Tomograph(pImage, slider_rays.getValue(), slider_angle.getValue(), slider_step.getValue());
+        Tomograph tomograph = new Tomograph(pImage, slider_rays.getValue(),
+                                        slider_angle.getValue(),
+                                        slider_step.getValue(),
+                                        gc_right);
         pImage.getGraphicsContext().drawImage(pImage.getImageGray(), 0, 0);
         progressBar.progressProperty().bind(tomograph.getSinogramGenerator().progressProperty());
         tomograph.getSinogramGenerator().start();

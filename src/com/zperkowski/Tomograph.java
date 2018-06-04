@@ -2,6 +2,8 @@ package com.zperkowski;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.awt.image.BufferedImage;
@@ -13,16 +15,23 @@ public class Tomograph {
     private ProcessingImage pImage;
     private double rays, angle, step;
     private BufferedImage sinogram;
+    private GraphicsContext canvas;
 
     private TaskGenerateSinogram sinogramGenerator;
 
-    public Tomograph(ProcessingImage pImage, double rays, double angle, double step) {
+    public Tomograph(ProcessingImage pImage, double rays, double angle, double step, GraphicsContext canvasToShow) {
         this.pImage = pImage;
         this.rays = rays;
         this.angle = angle;
         this.step = step;
+        this.canvas = canvasToShow;
 
-        sinogram = new BufferedImage((int) rays, (int) Math.ceil(360 / step), BufferedImage.TYPE_BYTE_GRAY);
+        int canvasWidth = (int) rays;
+        int canvasHeight = (int) Math.ceil(360 / step);
+
+        this.canvas.getCanvas().setWidth(canvasWidth);
+        this.canvas.getCanvas().setHeight(canvasHeight);
+        sinogram = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_BYTE_GRAY);
         System.out.println("Sinogram: " + sinogram);
     }
 
@@ -34,7 +43,7 @@ public class Tomograph {
 
 
     class TaskGenerateSinogram extends Service<Void> {
-        int rawOfSinogram = 0;
+        int rowOfSinogram = 0;
 
         @Override
         protected Task<Void> createTask() {
@@ -46,9 +55,11 @@ public class Tomograph {
                         System.out.println(i + "\t" + ((double) i / 359));
                         pImage.drawRays(rays, (double) i, angle);
                         lines = pImage.bresenham(rays, (double) i, angle);
-                        generateSinogram(lines, rawOfSinogram);
+                        generateSinogram(lines, rowOfSinogram);
                         updateProgress((i / 359), 1.0);
-                        rawOfSinogram++;
+                        canvas.drawImage(SwingFXUtils.toFXImage(sinogram, null), 0, 0,
+                                                            sinogram.getWidth(), sinogram.getHeight());
+                        rowOfSinogram++;
                     }
                     updateProgress(1.0, 1.0);
                     return 1.0;
@@ -70,7 +81,6 @@ public class Tomograph {
                 sum /= j;
                 int gray = (int) (255 / sum);
                 sinogram.setRGB(i, rowOfSinogram, (gray << 16) + (gray << 8) + gray);
-                //TODO: Visualize the sinogram
             }
         }
 
