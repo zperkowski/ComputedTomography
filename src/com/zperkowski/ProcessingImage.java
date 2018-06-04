@@ -32,7 +32,7 @@ public class ProcessingImage {
         height = (int) image.getHeight();
 
         changeCanvasSize(this.image, canvas);
-        graphicsContext.drawImage(image, 0, 0, width, height);
+        reloadCanvas();
 
         centerX = width / 2;
         centerY = height / 2;
@@ -42,6 +42,7 @@ public class ProcessingImage {
         else
             normHeight = normWidth = height;
     }
+
 
     public Image getImage() {
         return image;
@@ -82,6 +83,10 @@ public class ProcessingImage {
     public void clearCanvas() {
         graphicsContext.clearRect(0, 0, width, height);
         changeCanvasSize(null, graphicsContext.getCanvas());
+    }
+
+    public void reloadCanvas() {
+        graphicsContext.drawImage(image, 0, 0, width, height);
     }
 
     private void changeCanvasSize(@Nullable Image image, Canvas canvas) {
@@ -274,11 +279,12 @@ public class ProcessingImage {
                 }
             }
             listAllLines.add(listPointsOfLine);
-            for (Map point :
-                    listPointsOfLine) {
-                System.out.print(point.get("x") + " " + point.get("y") + "\t");
-            }
-            System.out.println("\n");
+//            Commented to speed up
+//            for (Map point :
+//                    listPointsOfLine) {
+//                System.out.print(point.get("x") + " " + point.get("y") + "\t");
+//            }
+//            System.out.println("\n");
         }
         return listAllLines;
     }

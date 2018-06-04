@@ -53,6 +53,8 @@ public class Tomograph {
                     for (int i = 0; i < 360; i += step) {
                         Thread.sleep(75);
                         System.out.println(i + "\t" + ((double) i / 359));
+                        pImage.reloadCanvas();
+                        pImage.drawOval();
                         pImage.drawRays(rays, (double) i, angle);
                         lines = pImage.bresenham(rays, (double) i, angle);
                         generateSinogram(lines, rowOfSinogram);
