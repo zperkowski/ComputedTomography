@@ -278,9 +278,8 @@ public class ProcessingImage {
                     listPointsOfLine) {
                 System.out.print(point.get("x") + " " + point.get("y") + "\t");
             }
-            System.out.println();
+            System.out.println("\n");
         }
-        System.out.println();
         return listAllLines;
     }
 }

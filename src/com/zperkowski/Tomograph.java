@@ -22,8 +22,8 @@ public class Tomograph {
         this.angle = angle;
         this.step = step;
 
-        sinogram = new BufferedImage((int) (360 / step), (int) rays, BufferedImage.TYPE_BYTE_GRAY);
-        System.out.println(sinogram);
+        sinogram = new BufferedImage((int) rays, (int) Math.ceil(360 / step), BufferedImage.TYPE_BYTE_GRAY);
+        System.out.println("Sinogram: " + sinogram);
     }
 
     public TaskGenerateSinogram getSinogramGenerator() {
@@ -43,11 +43,11 @@ public class Tomograph {
                     List<List> lines;
                     for (int i = 0; i < 360; i += step) {
                         Thread.sleep(75);
+                        System.out.println(i + "\t" + ((double) i / 359));
                         pImage.drawRays(rays, (double) i, angle);
                         lines = pImage.bresenham(rays, (double) i, angle);
                         generateSinogram(lines, rawOfSinogram);
                         updateProgress((i / 359), 1.0);
-                        System.out.println(i + "\t" + ((double) i / 359));
                         rawOfSinogram++;
                     }
                     updateProgress(1.0, 1.0);
