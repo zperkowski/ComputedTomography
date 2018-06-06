@@ -38,10 +38,12 @@ public class ControllerMainWindow {
     ProgressBar progressBar;
 
     private ProcessingImage pImage;
+    private GraphicsContext gc_left;
     private GraphicsContext gc_right;
 
     @FXML
     public void initialize() {
+        gc_left = canvas_center.getGraphicsContext2D();
         gc_right = canvas_right.getGraphicsContext2D();
         menu_new();
     }
@@ -55,6 +57,7 @@ public class ControllerMainWindow {
         Tomograph tomograph = new Tomograph(pImage, slider_rays.getValue(),
                                         slider_angle.getValue(),
                                         slider_step.getValue(),
+                                        gc_left,
                                         gc_right);
         pImage.getGraphicsContext().drawImage(pImage.getImageGray(), 0, 0);
         progressBar.progressProperty().bind(tomograph.getSinogramGenerator().progressProperty());
