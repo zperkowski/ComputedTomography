@@ -9,6 +9,8 @@ import javafx.scene.paint.Color;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 public class Tomograph {
 
@@ -16,6 +18,8 @@ public class Tomograph {
     private double rays, angle, step;
     private BufferedImage sinogram;
     private GraphicsContext canvas;
+    private Set<List> allCalculatedLines;
+    private BufferedImage generatedImage;
 
     private TaskGenerateSinogram sinogramGenerator;
 
@@ -33,6 +37,9 @@ public class Tomograph {
         this.canvas.getCanvas().setHeight(canvasHeight);
         sinogram = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_BYTE_GRAY);
         System.out.println("Sinogram: " + sinogram);
+
+        allCalculatedLines = new HashSet<>();
+        generatedImage = new BufferedImage(pImage.getNormWidth(), pImage.getNormHeight(), BufferedImage.TYPE_BYTE_GRAY);
     }
 
     public TaskGenerateSinogram getSinogramGenerator() {
@@ -57,6 +64,7 @@ public class Tomograph {
                         pImage.drawOval();
                         pImage.drawRays(rays, (double) i, angle);
                         lines = pImage.bresenham(rays, (double) i, angle);
+                        allCalculatedLines.add(lines);
                         generateSinogram(lines, rowOfSinogram);
                         updateProgress((i / 359), 1.0);
                         canvas.drawImage(SwingFXUtils.toFXImage(sinogram, null), 0, 0,
