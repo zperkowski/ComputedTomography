@@ -146,7 +146,7 @@ public class Tomograph {
         }
 
         private void drawOneRay(List<Map<String, Integer>> points, int columnOfSinogram,  int rowOfSinogram) {
-            int color, currentColor, x, y;
+            int mul, currentColor, x, y;
             java.awt.Color sinogramColor = new java.awt.Color(sinogram.getRGB(columnOfSinogram, rowOfSinogram));
             java.awt.Color imageColor;
 
@@ -155,7 +155,16 @@ public class Tomograph {
                 x = point.get("x");
                 y = point.get("y");
                 imageColor = new java.awt.Color(generatedImage.getRGB(x, y));
-                currentColor = ((imageColor.getRed() +  sinogramColor.getRed()) / 2);
+
+                if (sinogramColor.getRed() > 50)
+                    mul = 2;
+                else
+                    mul = -1;
+                currentColor = (int) (imageColor.getRed() + (255 * ((step / 180)) * mul));
+                if (currentColor > 255)
+                    currentColor = 255;
+                if (currentColor < 0)
+                    currentColor = 0;
                 generatedImage.setRGB(x, y, (currentColor << 16) + (currentColor << 8) + currentColor);
             }
         }
