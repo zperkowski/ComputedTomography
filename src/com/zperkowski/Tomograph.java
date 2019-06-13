@@ -4,10 +4,8 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
@@ -21,6 +19,7 @@ public class Tomograph {
     private GraphicsContext canvasLeft;
     private List<List> allCalculatedLines;
     private BufferedImage generatedImage;
+    private ArrayList<ArrayList<Integer>> hitsMatrix;
 
     private TaskGenerateSinogram sinogramGenerator;
     private TaskGenerateImage generateImage;
@@ -43,6 +42,15 @@ public class Tomograph {
 
         allCalculatedLines = new ArrayList<>();
         generatedImage = new BufferedImage(pImage.getNormWidth(), pImage.getNormHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        hitsMatrix = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < pImage.getNormHeight(); i++) {
+            hitsMatrix.add(new ArrayList<>());
+            for (int j = 0; j < pImage.getNormHeight(); j++) {
+                hitsMatrix.get(i).add(0);
+            }
+        }
+
+
     }
 
     public TaskGenerateSinogram getSinogramGenerator() {
@@ -107,11 +115,7 @@ public class Tomograph {
                     sum += RGBtoGray(pImage.getImageGray().getPixelReader().getColor(x,y));
                 }
                 sum /= j;
-                int gray;
-                if (sum != 0.0)
-                    gray = (int) (255 / sum);
-                else
-                    gray = 0;
+                int gray = (int) (255 * sum);
                 sinogram.setRGB(i, rowOfSinogram, (gray << 16) + (gray << 8) + gray);
             }
         }
@@ -129,9 +133,17 @@ public class Tomograph {
                     for (int i = 0; i < allCalculatedLines.size(); i++) {
                         System.out.println(i + "\t" + ((double) i / 359));
                         drawBeamOfRays(allCalculatedLines.get(i), i);
-                        canvasLeft.drawImage(SwingFXUtils.toFXImage(generatedImage, null), 0, 0,
-                                                generatedImage.getWidth(), generatedImage.getHeight());
                     }
+                    ArrayList<ArrayList<Integer>> normHitsMatrix = normalize2DMatrix(hitsMatrix);
+                    float normalized_value;
+                    for (int y = 0; y < normHitsMatrix.size(); y++) {
+                        for (int x = 0; x < normHitsMatrix.get(y).size(); x++) {
+                            normalized_value = normHitsMatrix.get(y).get(x);
+                            generatedImage.setRGB(x, y, ((int) normalized_value << 16) + ((int) normalized_value << 8) + (int) normalized_value);
+                        }
+                    }
+                    canvasLeft.drawImage(SwingFXUtils.toFXImage(generatedImage, null), 0, 0,
+                            generatedImage.getWidth(), generatedImage.getHeight());
                     return null;
                 }
             };
@@ -140,7 +152,8 @@ public class Tomograph {
 
         private void drawBeamOfRays(List<List<Map<String, Integer>>> rays, int rowOfSinogram) {
             for (int i = 0; i < rays.size(); i++) {
-                drawOneRay(rays.get(i), i, rowOfSinogram);
+                // drawOneRay(rays.get(i), i, rowOfSinogram);
+                drawOneRayOnHitsMatrix(rays.get(i), i, rowOfSinogram);
             }
 
         }
@@ -166,6 +179,56 @@ public class Tomograph {
                 if (currentColor < 0)
                     currentColor = 0;
                 generatedImage.setRGB(x, y, (currentColor << 16) + (currentColor << 8) + currentColor);
+            }
+        }
+
+        private Map<String, Integer> findMinAndMax(ArrayList<ArrayList<Integer>> matrix) {
+            Map<String, Integer> map = new HashMap<>();
+            int min = Integer.MAX_VALUE;
+            int max = Integer.MIN_VALUE;
+            for (int y = 0; y < matrix.size(); y++) {
+                for (int x = 0; x < matrix.get(y).size(); x++) {
+                    if (min > matrix.get(y).get(x))
+                        min = matrix.get(y).get(x);
+                    if (max < matrix.get(y).get(x))
+                        max = matrix.get(y).get(x);
+                }
+            }
+            map.put("min", min);
+            map.put("max", max);
+            return map;
+        }
+
+        private ArrayList<ArrayList<Integer>> normalize2DMatrix(ArrayList<ArrayList<Integer>> matrix) {
+            ArrayList<ArrayList<Integer>> normMatrix = new ArrayList<ArrayList<Integer>>();
+            Map<String, Integer> mapMinMax = findMinAndMax(matrix);
+            double value, normalized_value;
+            for (int y = 0; y < matrix.size() - 1; y++) {
+                normMatrix.add(new ArrayList<>());
+                for (int x = 0; x < matrix.get(y).size(); x++) {
+                    value = (matrix.get(y).get(x));
+                    normalized_value = (value - mapMinMax.get("min")) / (mapMinMax.get("max") - mapMinMax.get("min"));
+                    normalized_value *= 255;
+                    normMatrix.get(y).add((int) normalized_value);
+                }
+            }
+            return normMatrix;
+        }
+
+        private void drawOneRayOnHitsMatrix(List<Map<String, Integer>> points, int columnOfSinogram,  int rowOfSinogram) {
+            int x, y, currentColor;
+            java.awt.Color sinogramColorObj = new java.awt.Color(sinogram.getRGB(columnOfSinogram, rowOfSinogram));
+            int sinogramColorRed = sinogramColorObj.getRed();
+            int sinogramColorGreen = sinogramColorObj.getGreen();
+            int sinogramColorBlue = sinogramColorObj.getBlue();
+            int sinogramColorGray = (sinogramColorRed + sinogramColorGreen + sinogramColorBlue) / 3;
+
+            for (Map<String, Integer> point : points) {
+                x = point.get("x");
+                y = point.get("y");
+                // Todo: Check if x and y are x and y
+                currentColor = hitsMatrix.get(y).get(x);
+                hitsMatrix.get(y).set(x, currentColor + sinogramColorGray);
             }
         }
     }
