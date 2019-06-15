@@ -91,11 +91,15 @@ public class Tomograph {
                         lines = pImage.bresenham(rays, (double) i, angle);
                         allCalculatedLines.add(lines);
                         generateSinogram(lines, rowOfSinogram);
+
                         updateProgress((i / 359), 1.0);
                         canvasRight.drawImage(SwingFXUtils.toFXImage(sinogram, null), 0, 0,
                                                             sinogram.getWidth(), sinogram.getHeight());
                         rowOfSinogram++;
                     }
+                    normalizeSinogram();
+                    canvasRight.drawImage(SwingFXUtils.toFXImage(sinogram, null), 0, 0,
+                            sinogram.getWidth(), sinogram.getHeight());
                     updateProgress(1.0, 1.0);
                     getImageGenerator().start();
                     return 1.0;
@@ -104,6 +108,61 @@ public class Tomograph {
             return task;
         }
 
+
+        private Map<String, Integer> findMinAndMax(ArrayList<ArrayList<Integer>> matrix) {
+            Map<String, Integer> map = new HashMap<>();
+            int min = Integer.MAX_VALUE;
+            int max = Integer.MIN_VALUE;
+            for (int y = 0; y < matrix.size(); y++) {
+                for (int x = 0; x < matrix.get(y).size(); x++) {
+                    if (min > matrix.get(y).get(x))
+                        min = matrix.get(y).get(x);
+                    if (max < matrix.get(y).get(x))
+                        max = matrix.get(y).get(x);
+                }
+            }
+            map.put("min", min);
+            map.put("max", max);
+            return map;
+        }
+
+        private ArrayList<ArrayList<Integer>> normalize2DMatrix(ArrayList<ArrayList<Integer>> matrix) {
+            ArrayList<ArrayList<Integer>> normMatrix = new ArrayList<ArrayList<Integer>>();
+            Map<String, Integer> mapMinMax = findMinAndMax(matrix);
+            double value, normalized_value;
+            for (int y = 0; y < matrix.size() - 1; y++) {
+                normMatrix.add(new ArrayList<>());
+                for (int x = 0; x < matrix.get(y).size(); x++) {
+                    value = (matrix.get(y).get(x));
+                    normalized_value = (value - mapMinMax.get("min")) / (mapMinMax.get("max") - mapMinMax.get("min"));
+                    normalized_value *= 255;
+                    normMatrix.get(y).add((int) normalized_value);
+                }
+            }
+            return normMatrix;
+        }
+        private void normalizeSinogram() {
+            ArrayList<ArrayList<Integer>> matrix = new ArrayList<>();
+            int value;
+            for (int y = 0; y < sinogram.getHeight(); y++) {
+                matrix.add(new ArrayList<>());
+                for (int x = 0; x < sinogram.getWidth(); x++) {
+                    value = new java.awt.Color(sinogram.getRGB(x, y)).getRed();
+                    matrix.get(y).add(value);
+                }
+            }
+            ArrayList<ArrayList<Integer>> normSinogram = normalize2DMatrix(matrix);
+            for (int y = 0; y < normSinogram.size(); y++) {
+                for (int x = 0; x < normSinogram.get(y).size(); x++) {
+                    value = normSinogram.get(y).get(x);
+                    sinogram.setRGB(x, y, (value << 16) + (value << 8) + value);
+                }
+            }
+        }
+        private double s_function(double x) {
+            // 0.5 * (1 + sin((x*pi)-(pi/2)))
+            return 0.5 * (1 + Math.sin((x*Math.PI)-(Math.PI/2)))*254;
+        }
         private void generateSinogram(List<List> lines, int rowOfSinogram) {
             for (int i = 0; i < lines.size(); i++) {
                 List<Map<String, Integer>> pointsOfLine = lines.get(i);
@@ -115,7 +174,7 @@ public class Tomograph {
                     sum += RGBtoGray(pImage.getImageGray().getPixelReader().getColor(x,y));
                 }
                 sum /= j;
-                int gray = (int) (255 * sum);
+                int gray = (int) s_function(sum);
                 sinogram.setRGB(i, rowOfSinogram, (gray << 16) + (gray << 8) + gray);
             }
         }
@@ -226,7 +285,6 @@ public class Tomograph {
             for (Map<String, Integer> point : points) {
                 x = point.get("x");
                 y = point.get("y");
-                // Todo: Check if x and y are x and y
                 currentColor = hitsMatrix.get(y).get(x);
                 hitsMatrix.get(y).set(x, currentColor + sinogramColorGray);
             }

@@ -279,12 +279,6 @@ public class ProcessingImage {
                 }
             }
             listAllLines.add(listPointsOfLine);
-//            Commented to speed up
-//            for (Map point :
-//                    listPointsOfLine) {
-//                System.out.print(point.get("x") + " " + point.get("y") + "\t");
-//            }
-//            System.out.println("\n");
         }
         return listAllLines;
     }
